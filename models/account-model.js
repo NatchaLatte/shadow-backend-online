@@ -93,8 +93,6 @@ module.exports.signUpAccount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การสร้างบัญชีล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -129,8 +127,6 @@ module.exports.signInAccount = async (request, response) => {
             console.log(error)
             response.status(200).json({status: false, payload: 'การเข้าสู่ระบบล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -161,8 +157,6 @@ module.exports.authenticationAccount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดที่ไม่รู้จัก'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -192,8 +186,6 @@ module.exports.selectAccount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -224,8 +216,6 @@ module.exports.updateStatusAccount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขสถานะล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -248,8 +238,6 @@ module.exports.updateUsername = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขชื่อล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -304,8 +292,6 @@ module.exports.updateAvatar = async (request, response) => {
                 response.status(200).json({status: false, payload: 'การแก้ไขรูปภาพโปรไฟล์ล้มเหลว'})
             }
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -328,7 +314,5 @@ module.exports.updateGachaCount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขจำนวนกาชาล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }

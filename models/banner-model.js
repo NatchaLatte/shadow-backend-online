@@ -92,8 +92,6 @@ module.exports.bannerSelect = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: []})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -166,7 +164,5 @@ module.exports.bannerDelete = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การลบแถบประกาศล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
