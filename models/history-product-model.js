@@ -1,6 +1,7 @@
 const mysql = require('mysql2/promise')
 const jsonwebtoken = require('jsonwebtoken')
 const SECRET = process.env.SECRET
+const assert = require('assert')
 
 module.exports.createHistoryProduct = async (request, response) => {
     try{
@@ -60,6 +61,7 @@ module.exports.readSumAysel = async (request, response) => {
             database    : process.env.DATABASE_NAME
         })
         const [results] = await connection.query('SELECT SUM(product_price) AS sumAysel FROM history_product')
+        assert(results[0].sumAysel !== null)
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
