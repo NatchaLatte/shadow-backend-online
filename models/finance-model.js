@@ -1,9 +1,4 @@
 const mysql = require('mysql2/promise')
-const assert = require('assert')
-const multer = require('multer')
-const uuid = require('uuid')
-const path = require('path')
-const fs = require('fs')
 
 module.exports.updateAysel = async (request, response) => {
     try{
