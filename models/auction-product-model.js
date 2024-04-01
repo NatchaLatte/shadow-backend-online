@@ -36,7 +36,14 @@ module.exports.createAuctionProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 
@@ -89,7 +96,14 @@ module.exports.readAuctionProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM auction_product')
@@ -109,7 +123,14 @@ module.exports.readAuctionProductAll = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 
@@ -130,7 +151,14 @@ module.exports.readAuctionProductWithUUID = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid 
@@ -152,7 +180,14 @@ module.exports.readAuctionProductOldToNew = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 
@@ -173,7 +208,14 @@ module.exports.readAuctionProductNewToOld = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 
@@ -194,7 +236,14 @@ module.exports.readAuctionProductCheapToExpensive = async (request, response) =>
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 
@@ -215,7 +264,14 @@ module.exports.readAuctionProductExpensiveToCheap = async (request, response) =>
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 
@@ -236,7 +292,14 @@ module.exports.readAuction3Product = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 
@@ -257,10 +320,16 @@ module.exports.updateAuctionProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
-
         const requestUUID = request.params.uuid
         const requestName = request.body.name
         const requestGameName = request.body.game_name
@@ -270,6 +339,7 @@ module.exports.updateAuctionProduct = async (request, response) => {
         const requestEndTime = request.body.end_time
         const requestInformation = request.body.information
         const requestDescription = request.body.description
+        // แก้ไขรูปภาพไม่ได้ (information)
         await connection.query('UPDATE auction_product SET name = ? , game_name = ? , default_price = ? , default_bid = ?, start_time = ?, end_time = ? , information = ? , description = ? , update_at = ? WHERE uuid = ? LIMIT 1',
         [requestName, requestGameName, requestDefaultPrice, requestDefaultBid, requestStartTime, requestEndTime, requestInformation, requestDescription, new Date(), requestUUID])
         response.status(200).json({status: true, payload: 'การแก้ไขสินค้าประมูลสำเร็จ'})
@@ -287,7 +357,14 @@ module.exports.updateBid = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 
@@ -311,7 +388,14 @@ module.exports.updateAuctionStatus = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 
@@ -342,7 +426,14 @@ module.exports.deleteAuctionProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
 

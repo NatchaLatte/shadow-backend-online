@@ -36,7 +36,14 @@ module.exports.createGeneralProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         upload.single('file')(request, response, async (error) => {
@@ -92,7 +99,14 @@ module.exports.readGeneralProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product')
@@ -112,7 +126,14 @@ module.exports.readGeneralProductWithUUID = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid 
@@ -134,7 +155,14 @@ module.exports.readGeneralProductOldToNew = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY update_at')
@@ -154,7 +182,14 @@ module.exports.readGeneralProductNewToOld = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY update_at DESC')
@@ -174,7 +209,14 @@ module.exports.readGeneralProductCheapToExpensive = async (request, response) =>
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY normal_price')
@@ -194,7 +236,14 @@ module.exports.readGeneralProductExpensiveToCheap = async (request, response) =>
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY normal_price DESC')
@@ -214,7 +263,14 @@ module.exports.readGeneral3Product = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product LIMIT 3')
@@ -234,7 +290,14 @@ module.exports.updateGeneralProduct = async (request, response) => { // แก�
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -244,6 +307,7 @@ module.exports.updateGeneralProduct = async (request, response) => { // แก�
         const requestSpecialPrice = request.body.special_price
         const requestInformation = request.body.information
         const requestDescription = request.body.description
+        // แก้ไขรูปภาพไม่ได้ (information)
         await connection.query('UPDATE general_product SET name = ? , game_name = ? , normal_price = ? , special_price = ? , information = ? , description = ? , update_at = ? WHERE uuid = ? LIMIT 1',
         [requestName, requestGameName, requestNormalPrice, requestSpecialPrice, requestInformation, requestDescription, new Date(), requestUUID])
         response.status(200).json({status: true, payload: 'การแก้ไขสินค้าสำเร็จ'})
@@ -261,7 +325,14 @@ module.exports.updateStatusPrice = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -291,7 +362,14 @@ module.exports.deleteGeneralProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -315,7 +393,14 @@ module.exports.readPromotionProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1')
@@ -335,7 +420,14 @@ module.exports.readPromotionProductWithUUID = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid 
@@ -357,7 +449,14 @@ module.exports.readGeneralProductWithName = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestName = request.params.name
@@ -378,7 +477,14 @@ module.exports.readPromotionProductOldToNew = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY update_at')
@@ -398,7 +504,14 @@ module.exports.readPromotionProductNewToOld = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY update_at DESC')
@@ -418,7 +531,14 @@ module.exports.readPromotionProductCheapToExpensive = async (request, response) 
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY normal_price')
@@ -438,7 +558,14 @@ module.exports.readPromotionProductExpensiveToCheap = async (request, response) 
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY normal_price DESC')
@@ -458,7 +585,14 @@ module.exports.readPromotion3Product = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 LIMIT 3')

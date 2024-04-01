@@ -36,7 +36,14 @@ module.exports.createGachaProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         upload.single('file')(request, response, async (error) => {
@@ -86,7 +93,14 @@ module.exports.readGachaProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM gacha_product')
@@ -106,7 +120,14 @@ module.exports.readGachaProductWithNormal = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM gacha_product WHERE guarantee_status = 0')
@@ -126,7 +147,14 @@ module.exports.readGachaProductWithSpecial = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM gacha_product WHERE guarantee_status = 1')
@@ -146,7 +174,14 @@ module.exports.readGachaProductWithUUID = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -168,7 +203,14 @@ module.exports.readGachaProductOldToNew = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM gacha_product ORDER BY update_at')
@@ -188,7 +230,14 @@ module.exports.readGachaProductNewToOld = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM gacha_product ORDER BY update_at DESC')
@@ -208,7 +257,14 @@ module.exports.readGachaProductCheapToExpensive = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM gacha_product ORDER BY price')
@@ -228,7 +284,14 @@ module.exports.readGachaProductExpensiveToCheap = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM gacha_product ORDER BY price DESC')
@@ -248,7 +311,14 @@ module.exports.readGacha3Product = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM gacha_product LIMIT 3')
@@ -268,7 +338,14 @@ module.exports.updateGachaProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -278,13 +355,15 @@ module.exports.updateGachaProduct = async (request, response) => {
         const requestGuarantee = request.body.guarantee_status
         const requestInformation = request.body.information
         const requestDescription = request.body.description
-        await connection.query('UPDATE gacha_product SET name = ? , game_name = ? , chance = ? , guarantee_status = ? , information = ? , description = ? , update_at = ? WHERE uuid = ? LIMIT 1',
+        // แก้ไขรูปภาพไม่ได้ (information)
+        await connection.query('UPDATE gacha_product SET name = ?, game_name = ?, chance = ?, guarantee_status = ?, information = ?, description = ?, update_at = ? WHERE uuid = ? LIMIT 1',
         [requestName, requestGameName, requestChance, requestGuarantee, requestInformation, requestDescription, new Date(), requestUUID])
         response.status(200).json({status: true, payload: 'การแก้ไขสินค้ากาชาสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
             response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
         }else{
+            console.log(error)
             response.status(200).json({status: false, payload: 'การแก้ไขสินค้ากาชาล้มเหลว'})
         }
     }
@@ -295,7 +374,14 @@ module.exports.updateGuaranteeStatus = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -325,7 +411,14 @@ module.exports.deleteGachaProduct = async (request, response) => {
         host        : process.env.DATABASE_HOST,
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
-        database    : process.env.DATABASE_NAME
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
