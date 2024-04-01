@@ -19,7 +19,5 @@ module.exports.updateAysel = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขจำนวนไอเซลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }

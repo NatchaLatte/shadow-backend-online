@@ -92,7 +92,6 @@ module.exports.readAuctionProduct = async (request, response) => {
         database    : process.env.DATABASE_NAME
     })
     try{
-
         const [results] = await connection.query('SELECT * FROM auction_product')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -134,7 +133,6 @@ module.exports.readAuctionProductWithUUID = async (request, response) => {
         database    : process.env.DATABASE_NAME
     })
     try{
-
         const requestUUID = request.params.uuid 
         const [results] = await connection.query('SELECT * FROM auction_product WHERE uuid = ?',
         [requestUUID])
