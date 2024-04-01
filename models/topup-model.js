@@ -27,7 +27,5 @@ module.exports.topUp = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การเติมไอเซลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }

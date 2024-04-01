@@ -47,8 +47,6 @@ module.exports.paymentMethodSelect = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -97,8 +95,6 @@ module.exports.paymentMethodUpdateImage = async (request, response) => {
                 response.status(200).json({status: false, payload: 'การแก้ไขรูปภาพสอนการชำระเงินล้มเหลว'})
             }
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -121,8 +117,6 @@ module.exports.paymentMethodUpdateVideo = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขวิดีโอสอนการชำระเงินล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -149,8 +143,6 @@ module.exports.deletePaymentMethodImage = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การลบรูปภาพสอนการชำระเงินล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -175,7 +167,5 @@ module.exports.deletePaymentMethodVideo = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การลบวิดีโอสอนการชำระเงินล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }

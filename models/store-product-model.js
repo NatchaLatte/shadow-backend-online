@@ -25,8 +25,6 @@ module.exports.createStoreProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การเพิ่มสินค้าล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -50,8 +48,6 @@ module.exports.readStoreProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -75,7 +71,5 @@ module.exports.readLastedStoreProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }

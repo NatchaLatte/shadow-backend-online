@@ -26,8 +26,6 @@ module.exports.createHistoryProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การสร้างประวัติธุรกรรมล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -51,8 +49,6 @@ module.exports.readHistoryProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -73,8 +69,6 @@ module.exports.readSumAysel = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -94,7 +88,5 @@ module.exports.readSumBuyItems = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }

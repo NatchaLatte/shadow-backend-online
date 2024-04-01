@@ -22,8 +22,6 @@ module.exports.readHistoryPayment = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
 
@@ -43,7 +41,5 @@ module.exports.readSumCash = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }

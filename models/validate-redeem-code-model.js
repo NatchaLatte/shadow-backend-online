@@ -37,7 +37,5 @@ module.exports.validateRedeemCode = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'ตรวจสอบความถูกต้องของข้อมูลล้มเหลว'})
         }
-    }finally {
-        await connection.end();
     }
 }
