@@ -240,8 +240,43 @@ module.exports.updateUsername = async (request, response) => {
     }
 }
 
-module.exports.updateAvatar = (request, response) => {
-
+module.exports.updateAvatar = async (request, response) => {
+    try{
+        const connection = await mysql.createConnection({
+            host        : process.env.DATABASE_HOST,
+            user        : process.env.DATABASE_USER,
+            password    : process.env.DATABASE_PASSWORD,
+            database    : process.env.DATABASE_NAME
+        })
+        upload.single('file')(request, response, async (error) => {
+            if(error){
+                response.status(200).json({status: false, payload: error.message})
+            }else{
+                const token = request.cookies.token
+                jsonwebtoken.verify(token, SECRET)
+                const requestEmail = request.body.email
+                const requestAvatar = request.file.filename
+                const [results] = await connection.query('SELECT avatar FROM account WHERE email = ?',
+                [requestEmail])
+                assert(results.length > 0)
+                const information = results[0].avatar
+                fs.unlinkSync(path.join('./public/images/avatar', information))
+                await connection.query('UPDATE account SET avatar = ?, update_at = ? WHERE email = ?',
+                [requestAvatar, new Date(), requestEmail])
+                response.status(200).json({status: true, payload: 'การแก้ไขรูปภาพโปรไฟล์สำเร็จ'})
+            }
+        })
+    }catch(error){
+        try{
+            fs.unlinkSync(path.join('./public/images/avatar', request.file.filename))
+        }catch(error){}finally{
+            if(error.code === 'ECONNREFUSED'){
+                response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+            }else{
+                response.status(200).json({status: false, payload: 'การแก้ไขรูปภาพโปรไฟล์ล้มเหลว'})
+            }
+        }
+    }
 }
 
 module.exports.updateGachaCount = async (request, response) => {

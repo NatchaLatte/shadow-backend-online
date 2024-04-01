@@ -1,7 +1,6 @@
 const mysql = require('mysql2/promise')
 const jsonwebtoken = require('jsonwebtoken')
 const SECRET = process.env.SECRET
-const assert = require('assert')
 
 module.exports.createStoreProduct = async (request, response) => {
     try{
