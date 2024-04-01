@@ -338,6 +338,7 @@ module.exports.readPromotionProductWithUUID = async (request, response) => {
         database    : process.env.DATABASE_NAME
     })
     try{
+        const requestUUID = request.params.uuid 
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 and uuid = ?',
         [requestUUID])
         assert(results.length > 0)

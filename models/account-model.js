@@ -281,7 +281,8 @@ module.exports.updateAvatar = async (request, response) => {
                 }catch(error){
                     try{
                         fs.unlinkSync(path.join('./public/images/avatar', request.file.filename))
-                    }catch(error){}finally{
+                    }catch(error){}
+                    finally{
                         if(error.code === 'ECONNREFUSED'){
                             response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
                         }else{
