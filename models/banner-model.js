@@ -1,11 +1,10 @@
 const mysql = require('mysql2/promise')
 const assert = require('assert')
-const jsonwebtoken = require('jsonwebtoken')
-const SECRET = process.env.SECRET
 const multer = require('multer')
 const uuid = require('uuid')
 const path = require('path')
 const fs = require('fs')
+
 const storageBanner = multer.diskStorage({
     destination: (request, file, callback) => {
         callback(null, './public/images/banner')
@@ -138,7 +137,6 @@ module.exports.bannerDelete = async (request, response) => {
         fs.unlinkSync(path.join('./public/images/banner', information))
         response.status(200).json({status: true, payload: 'การลบแถบประกาศสำเร็จ'})
     }catch(error){
-        console.log(error)
         if(error.code === 'ECONNREFUSED'){
             response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
         }else{
