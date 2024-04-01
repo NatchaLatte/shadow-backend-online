@@ -1,6 +1,4 @@
 const mysql = require('mysql2/promise')
-const jsonwebtoken = require('jsonwebtoken')
-const SECRET = process.env.SECRET
 const assert = require('assert')
 const multer = require('multer')
 const uuid = require('uuid')
@@ -281,9 +279,7 @@ module.exports.deleteGeneralProduct = async (request, response) => {
         const requestUUID = request.params.uuid
         const [results] = await connection.query('SELECT information FROM general_product WHERE uuid = ?', [requestUUID])
         assert(results.length > 0)
-        console.log(results)
         const information = results[0].information
-        console.log(information)
         await connection.query('DELETE FROM general_product WHERE uuid = ?', [requestUUID])
         fs.unlinkSync(path.join('./public/images/general-product', information))
         response.status(200).json({status: true, payload: 'การลบสินค้าสำเร็จ'})

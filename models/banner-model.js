@@ -130,9 +130,7 @@ module.exports.bannerDelete = async (request, response) => {
         const requestUUID = request.params.uuid
         const [results] = await connection.query('SELECT information FROM banner WHERE uuid = ?', [requestUUID])
         assert(results.length > 0)
-        console.log(results)
         const information = results[0].information
-        console.log(information)
         await connection.query('DELETE FROM banner WHERE uuid = ?', [requestUUID])
         fs.unlinkSync(path.join('./public/images/banner', information))
         response.status(200).json({status: true, payload: 'การลบแถบประกาศสำเร็จ'})
