@@ -2,13 +2,13 @@ const mysql = require('mysql2/promise')
 const assert = require('assert')
 
 module.exports.validateRedeemCode = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestGameName = Object.keys(request.body)[0]
         const requestRedeemCode = Object.values(request.body)[0]
         const [resultsStoreProduct] = await connection.query('SELECT uuid, method_uuid FROM store_product WHERE used_status = 0 AND game_name = ? AND uuid = ?',
@@ -37,5 +37,7 @@ module.exports.validateRedeemCode = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'ตรวจสอบความถูกต้องของข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }

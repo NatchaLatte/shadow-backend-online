@@ -32,34 +32,52 @@ const upload = multer({
 })
 
 module.exports.createGeneralProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         upload.single('file')(request, response, async (error) => {
             if(error){
                 response.status(200).json({status: false, payload: error.message})
             }else{
-                const requestUUID = uuid.v4()
-                const requestProductId = request.body.productId
-                const requestGameName = request.body.gameName
-                const requestName = request.body.name
-                const requestNormalPrice = request.body.normalPrice
-                const requestSpecialPrice = request.body.specialPrice
-                const requestInformation = request.file.filename
-                const requestDescription = request.body.description
-                await connection.query('INSERT INTO general_product (uuid, product_id, game_name, name, normal_price, special_price, special_price_status, information, description, create_at, update_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [requestUUID, requestProductId, requestGameName, requestName, requestNormalPrice, requestSpecialPrice, false, requestInformation, requestDescription, new Date(), new Date()])
-                response.status(200).json({status: true, payload: 'การเพิ่มสินค้าสำเร็จ'})
+                try{
+                    const requestUUID = uuid.v4()
+                    const requestProductId = request.body.productId
+                    const requestGameName = request.body.gameName
+                    const requestName = request.body.name
+                    const requestNormalPrice = request.body.normalPrice
+                    const requestSpecialPrice = request.body.specialPrice
+                    const requestInformation = request.file.filename
+                    const requestDescription = request.body.description
+                    await connection.query('INSERT INTO general_product (uuid, product_id, game_name, name, normal_price, special_price, special_price_status, information, description, create_at, update_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    [requestUUID, requestProductId, requestGameName, requestName, requestNormalPrice, requestSpecialPrice, false, requestInformation, requestDescription, new Date(), new Date()])
+                    response.status(200).json({status: true, payload: 'การเพิ่มสินค้าสำเร็จ'})
+                }catch(error){
+                    try{
+                        fs.unlinkSync(path.join('./public/images/general-product', request.file.filename))
+                    }catch(error){}finally{
+                        if(error.code === 'ECONNREFUSED'){
+                            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+                        }else{
+                            response.status(200).json({status: false, payload: 'การเพิ่มสินค้าล้มเหลว'})
+                        }
+                    }
+                }
             }
         })
     }catch(error){
         try{
             fs.unlinkSync(path.join('./public/images/general-product', request.file.filename))
-        }catch(error){}finally{
+        }catch(error){
+            if(error.code === 'ECONNREFUSED'){
+                response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+            }else{
+                response.status(200).json({status: false, payload: 'การเพิ่มสินค้าล้มเหลว'})
+            }
+        }finally{
             if(error.code === 'ECONNREFUSED'){
                 response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
             }else{
@@ -70,13 +88,13 @@ module.exports.createGeneralProduct = async (request, response) => {
 }
 
 module.exports.readGeneralProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -90,13 +108,13 @@ module.exports.readGeneralProduct = async (request, response) => {
 }
 
 module.exports.readGeneralProductWithUUID = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid 
         const [results] = await connection.query('SELECT * FROM general_product WHERE uuid = ?',
         [requestUUID])
@@ -112,13 +130,13 @@ module.exports.readGeneralProductWithUUID = async (request, response) => {
 }
 
 module.exports.readGeneralProductOldToNew = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY update_at')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -132,13 +150,13 @@ module.exports.readGeneralProductOldToNew = async (request, response) => {
 }
 
 module.exports.readGeneralProductNewToOld = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY update_at DESC')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -152,13 +170,13 @@ module.exports.readGeneralProductNewToOld = async (request, response) => {
 }
 
 module.exports.readGeneralProductCheapToExpensive = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY normal_price')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -172,13 +190,13 @@ module.exports.readGeneralProductCheapToExpensive = async (request, response) =>
 }
 
 module.exports.readGeneralProductExpensiveToCheap = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY normal_price DESC')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -192,13 +210,13 @@ module.exports.readGeneralProductExpensiveToCheap = async (request, response) =>
 }
 
 module.exports.readGeneral3Product = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product LIMIT 3')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -212,13 +230,13 @@ module.exports.readGeneral3Product = async (request, response) => {
 }
 
 module.exports.updateGeneralProduct = async (request, response) => { // แก้รูปภาพไม่ได้
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const requestName = request.body.name
         const requestGameName = request.body.game_name
@@ -239,13 +257,13 @@ module.exports.updateGeneralProduct = async (request, response) => { // แก�
 }
 
 module.exports.updateStatusPrice = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const requestStatus = request.body.special_price_status
         if(requestStatus === 0){
@@ -269,13 +287,13 @@ module.exports.updateStatusPrice = async (request, response) => {
 }
 
 module.exports.deleteGeneralProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const [results] = await connection.query('SELECT information FROM general_product WHERE uuid = ?', [requestUUID])
         assert(results.length > 0)
@@ -293,13 +311,13 @@ module.exports.deleteGeneralProduct = async (request, response) => {
 }
 
 module.exports.readPromotionProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -313,13 +331,13 @@ module.exports.readPromotionProduct = async (request, response) => {
 }
 
 module.exports.readPromotionProductWithUUID = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 and uuid = ?',
         [requestUUID])
         assert(results.length > 0)
@@ -333,14 +351,35 @@ module.exports.readPromotionProductWithUUID = async (request, response) => {
     }
 }
 
-module.exports.readPromotionProductOldToNew = async (request, response) => {
+module.exports.readGeneralProductWithName = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+        const requestName = request.params.name
+        const [results] = await connection.query('SELECT * FROM general_product WHERE name = ?', [requestName])
+        assert(results.length > 0)
+        response.status(200).json({status: true, payload: results})
+    }catch(error){
+        if(error.code === 'ECONNREFUSED'){
+            response.status(200).json({status: false, payload: []})
+        }else{
+            response.status(200).json({status: false, payload: []})
+        }
+    }
+}
+
+module.exports.readPromotionProductOldToNew = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
+    try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY update_at')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -354,13 +393,13 @@ module.exports.readPromotionProductOldToNew = async (request, response) => {
 }
 
 module.exports.readPromotionProductNewToOld = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY update_at DESC')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -374,13 +413,13 @@ module.exports.readPromotionProductNewToOld = async (request, response) => {
 }
 
 module.exports.readPromotionProductCheapToExpensive = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY normal_price')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -394,13 +433,13 @@ module.exports.readPromotionProductCheapToExpensive = async (request, response) 
 }
 
 module.exports.readPromotionProductExpensiveToCheap = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY normal_price DESC')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -414,13 +453,13 @@ module.exports.readPromotionProductExpensiveToCheap = async (request, response) 
 }
 
 module.exports.readPromotion3Product = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 LIMIT 3')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})

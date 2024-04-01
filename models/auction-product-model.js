@@ -32,30 +32,43 @@ const upload = multer({
 })
 
 module.exports.createAuctionProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         upload.single('file')(request, response, async (error) => {
             if(error){
                 response.status(200).json({status: false, payload: error.message})
             }else{
-                const requestUUID = uuid.v4()
-                const requestProductId = request.body.productId
-                const requestGameName = request.body.gameName
-                const requestName = request.body.name
-                const requestDefaultPrice = request.body.defaultPrice
-                const requestDefaultBid = request.body.defaultBid
-                const requestStartTime = request.body.startTime
-                const requestEndTime = request.body.endTime
-                const requestInformation = request.file.filename
-                const requestDescription = request.body.description
-                await connection.query('INSERT INTO auction_product (uuid, product_id, game_name, name, default_price, default_bid, auction_status, start_time, end_time, information, description, latest_bidder, create_at, update_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [requestUUID, requestProductId, requestGameName, requestName, requestDefaultPrice, requestDefaultBid, false, requestStartTime, requestEndTime, requestInformation, requestDescription, 'ไร้นาม', new Date(), new Date()],)
-                response.status(200).json({status: true, payload: 'การเพิ่มสินค้าประมูลสำเร็จ'})
+                try{
+                    const requestUUID = uuid.v4()
+                    const requestProductId = request.body.productId
+                    const requestGameName = request.body.gameName
+                    const requestName = request.body.name
+                    const requestDefaultPrice = request.body.defaultPrice
+                    const requestDefaultBid = request.body.defaultBid
+                    const requestStartTime = request.body.startTime
+                    const requestEndTime = request.body.endTime
+                    const requestInformation = request.file.filename
+                    const requestDescription = request.body.description
+                    await connection.query('INSERT INTO auction_product (uuid, product_id, game_name, name, default_price, default_bid, auction_status, start_time, end_time, information, description, latest_bidder, create_at, update_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    [requestUUID, requestProductId, requestGameName, requestName, requestDefaultPrice, requestDefaultBid, false, requestStartTime, requestEndTime, requestInformation, requestDescription, 'ไร้นาม', new Date(), new Date()],)
+                    response.status(200).json({status: true, payload: 'การเพิ่มสินค้าประมูลสำเร็จ'})
+                }catch(error){
+                    try{
+                        fs.unlinkSync(path.join('./public/images/auction-product', request.file.filename))
+                    }catch(error){}finally{
+                        if(error.code === 'ECONNREFUSED'){
+                            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+                        }else{
+                            response.status(200).json({status: false, payload: 'การเพิ่มสินค้าประมูลล้มเหลว'})
+                        }
+                    }
+                }
             }
         })
     }catch(error){
@@ -72,13 +85,14 @@ module.exports.createAuctionProduct = async (request, response) => {
 }
 
 module.exports.readAuctionProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const [results] = await connection.query('SELECT * FROM auction_product')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -92,13 +106,14 @@ module.exports.readAuctionProduct = async (request, response) => {
 }
 
 module.exports.readAuctionProductAll = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const [results] = await connection.query('SELECT * FROM auction_product WHERE auction_status = 1')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -112,13 +127,14 @@ module.exports.readAuctionProductAll = async (request, response) => {
 }
 
 module.exports.readAuctionProductWithUUID = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const requestUUID = request.params.uuid 
         const [results] = await connection.query('SELECT * FROM auction_product WHERE uuid = ?',
         [requestUUID])
@@ -134,13 +150,14 @@ module.exports.readAuctionProductWithUUID = async (request, response) => {
 }
 
 module.exports.readAuctionProductOldToNew = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const [results] = await connection.query('SELECT * FROM auction_product ORDER BY update_at')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -154,13 +171,14 @@ module.exports.readAuctionProductOldToNew = async (request, response) => {
 }
 
 module.exports.readAuctionProductNewToOld = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const [results] = await connection.query('SELECT * FROM auction_product ORDER BY update_at DESC')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -174,13 +192,14 @@ module.exports.readAuctionProductNewToOld = async (request, response) => {
 }
 
 module.exports.readAuctionProductCheapToExpensive = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const [results] = await connection.query('SELECT * FROM auction_product ORDER BY default_price')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -194,13 +213,14 @@ module.exports.readAuctionProductCheapToExpensive = async (request, response) =>
 }
 
 module.exports.readAuctionProductExpensiveToCheap = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const [results] = await connection.query('SELECT * FROM auction_product ORDER BY default_price DESC')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -214,13 +234,14 @@ module.exports.readAuctionProductExpensiveToCheap = async (request, response) =>
 }
 
 module.exports.readAuction3Product = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const [results] = await connection.query('SELECT * FROM auction_product WHERE auction_status = 1 LIMIT 3')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -234,13 +255,14 @@ module.exports.readAuction3Product = async (request, response) => {
 }
 
 module.exports.updateAuctionProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const requestUUID = request.params.uuid
         const requestName = request.body.name
         const requestGameName = request.body.game_name
@@ -263,13 +285,14 @@ module.exports.updateAuctionProduct = async (request, response) => {
 }
 
 module.exports.updateBid = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const requestUUID = request.body.uuid
         const requestDefaultPrice = request.body.default_price
         const requestLatestBidder = request.body.latest_bidder
@@ -286,13 +309,14 @@ module.exports.updateBid = async (request, response) => {
 }
 
 module.exports.updateAuctionStatus = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const requestUUID = request.params.uuid
         const requestStatus = request.body.auction_status
         if(requestStatus === 0){
@@ -316,13 +340,14 @@ module.exports.updateAuctionStatus = async (request, response) => {
 }
 
 module.exports.deleteAuctionProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
+
         const requestUUID = request.params.uuid
         const [results] = await connection.query('SELECT information FROM auction_product WHERE uuid = ?', [requestUUID])
         assert(results.length > 0)

@@ -4,13 +4,13 @@ const twApi = require('@opecgame/twapi')
 const assert = require('assert')
 
 module.exports.topUp = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestEmail = request.body.email
         const requestGiftTrueMoney = request.body.giftTrueMoney
         const tw = await twApi(requestGiftTrueMoney, process.env.PHONENUMBER_RECIVE_MONEY)
@@ -27,5 +27,7 @@ module.exports.topUp = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การเติมไอเซลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }

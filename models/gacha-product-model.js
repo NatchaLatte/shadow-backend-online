@@ -32,28 +32,40 @@ const upload = multer({
 })
 
 module.exports.createGachaProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         upload.single('file')(request, response, async (error) => {
             if(error){
                 response.status(200).json({status: false, payload: error.message})
             }else{
-                const requestUUID = uuid.v4()
-                const requestProductId = request.body.productId
-                const requestGameName = request.body.gameName
-                const requestName = request.body.name
-                const requestChance = request.body.chance
-                const requestGuaranteeStatus = request.body.guaranteeStatus
-                const requestInformation = request.file.filename
-                const requestDescription = request.body.description
-                await connection.query('INSERT INTO gacha_product (uuid, product_id, game_name, name, chance, guarantee_status, information, description, create_at, update_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [requestUUID, requestProductId, requestGameName, requestName, requestChance, requestGuaranteeStatus, requestInformation, requestDescription, new Date(), new Date()],)
-                response.status(200).json({status: true, payload: 'การเพิ่มสินค้ากาชาสำเร็จ'})
+                try{
+                    const requestUUID = uuid.v4()
+                    const requestProductId = request.body.productId
+                    const requestGameName = request.body.gameName
+                    const requestName = request.body.name
+                    const requestChance = request.body.chance
+                    const requestGuaranteeStatus = request.body.guaranteeStatus
+                    const requestInformation = request.file.filename
+                    const requestDescription = request.body.description
+                    await connection.query('INSERT INTO gacha_product (uuid, product_id, game_name, name, chance, guarantee_status, information, description, create_at, update_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    [requestUUID, requestProductId, requestGameName, requestName, requestChance, requestGuaranteeStatus, requestInformation, requestDescription, new Date(), new Date()],)
+                    response.status(200).json({status: true, payload: 'การเพิ่มสินค้ากาชาสำเร็จ'})
+                }catch(error){
+                    try{
+                        fs.unlinkSync(path.join('./public/images/gacha-product', request.file.filename))
+                    }catch(error){}finally{
+                        if(error.code === 'ECONNREFUSED'){
+                            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+                        }else{
+                            response.status(200).json({status: false, payload: 'การเพิ่มสินค้ากาชาล้มเหลว'})
+                        }
+                    }
+                }
             }
         })
     }catch(error){
@@ -70,13 +82,13 @@ module.exports.createGachaProduct = async (request, response) => {
 }
 
 module.exports.readGachaProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM gacha_product')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -90,13 +102,13 @@ module.exports.readGachaProduct = async (request, response) => {
 }
 
 module.exports.readGachaProductWithNormal = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM gacha_product WHERE guarantee_status = 0')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -110,13 +122,13 @@ module.exports.readGachaProductWithNormal = async (request, response) => {
 }
 
 module.exports.readGachaProductWithSpecial = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM gacha_product WHERE guarantee_status = 1')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -130,13 +142,13 @@ module.exports.readGachaProductWithSpecial = async (request, response) => {
 }
 
 module.exports.readGachaProductWithUUID = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const [results] = await connection.query('SELECT * FROM gacha_product WHERE uuid = ?',
         [requestUUID])
@@ -152,13 +164,13 @@ module.exports.readGachaProductWithUUID = async (request, response) => {
 }
 
 module.exports.readGachaProductOldToNew = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM gacha_product ORDER BY update_at')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -172,13 +184,13 @@ module.exports.readGachaProductOldToNew = async (request, response) => {
 }
 
 module.exports.readGachaProductNewToOld = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM gacha_product ORDER BY update_at DESC')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -192,13 +204,13 @@ module.exports.readGachaProductNewToOld = async (request, response) => {
 }
 
 module.exports.readGachaProductCheapToExpensive = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM gacha_product ORDER BY price')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -212,13 +224,13 @@ module.exports.readGachaProductCheapToExpensive = async (request, response) => {
 }
 
 module.exports.readGachaProductExpensiveToCheap = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM gacha_product ORDER BY price DESC')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -232,13 +244,13 @@ module.exports.readGachaProductExpensiveToCheap = async (request, response) => {
 }
 
 module.exports.readGacha3Product = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT * FROM gacha_product LIMIT 3')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
@@ -252,13 +264,13 @@ module.exports.readGacha3Product = async (request, response) => {
 }
 
 module.exports.updateGachaProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const requestName = request.body.name
         const requestGameName = request.body.game_name
@@ -279,13 +291,13 @@ module.exports.updateGachaProduct = async (request, response) => {
 }
 
 module.exports.updateGuaranteeStatus = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const requestStatus = request.body.guarantee_status
         if(requestStatus === 0){
@@ -309,13 +321,13 @@ module.exports.updateGuaranteeStatus = async (request, response) => {
 }
 
 module.exports.deleteGachaProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const [results] = await connection.query('SELECT information FROM gacha_product WHERE uuid = ?', [requestUUID])
         assert(results.length > 0)

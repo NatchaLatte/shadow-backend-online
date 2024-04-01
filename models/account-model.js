@@ -72,13 +72,13 @@ const getDefaultAvatar = (requestUsername) => {
 }
 
 module.exports.signUpAccount = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestEmail = request.body.email
         const requestUsername = request.body.username
         const requestAvatar = getDefaultAvatar(requestUsername)
@@ -93,17 +93,19 @@ module.exports.signUpAccount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การสร้างบัญชีล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.signInAccount = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestEmail = request.body.email
         const [results] = await connection.query('SELECT email, suspended_status, role FROM account WHERE email = ?',
         [requestEmail])
@@ -124,19 +126,22 @@ module.exports.signInAccount = async (request, response) => {
         }else if(error.code === 'ERR_ASSERTION'){
             response.status(200).json({status: false, payload: error.message})
         }else{
+            console.log(error)
             response.status(200).json({status: false, payload: 'การเข้าสู่ระบบล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.authenticationAccount = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const token = request.cookies.token
         const decoded = jsonwebtoken.verify(token, SECRET)
         const requestEmail = decoded.email
@@ -156,6 +161,8 @@ module.exports.authenticationAccount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดที่ไม่รู้จัก'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
@@ -170,13 +177,13 @@ module.exports.signOutAccount = (request, response) => {
 }
 
 module.exports.selectAccount = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT email, username, suspended_status, role FROM account')
         response.status(200).json({status: true, payload: results})
     }catch(error){
@@ -185,17 +192,19 @@ module.exports.selectAccount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.updateStatusAccount = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestEmail = request.params.email
         const requestStatus = request.body.suspended_status
         if(requestStatus === 0){
@@ -215,17 +224,19 @@ module.exports.updateStatusAccount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขสถานะล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.updateUsername = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestEmail = request.params.email
         const requestUsername = request.body.username
         await connection.query('UPDATE account SET username = ?, update_at = ? WHERE email = ?',
@@ -237,33 +248,47 @@ module.exports.updateUsername = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขชื่อล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.updateAvatar = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         upload.single('file')(request, response, async (error) => {
             if(error){
                 response.status(200).json({status: false, payload: error.message})
             }else{
-                const token = request.cookies.token
-                jsonwebtoken.verify(token, SECRET)
-                const requestEmail = request.body.email
-                const requestAvatar = request.file.filename
-                const [results] = await connection.query('SELECT avatar FROM account WHERE email = ?',
-                [requestEmail])
-                assert(results.length > 0)
-                const information = results[0].avatar
-                fs.unlinkSync(path.join('./public/images/avatar', information))
-                await connection.query('UPDATE account SET avatar = ?, update_at = ? WHERE email = ?',
-                [requestAvatar, new Date(), requestEmail])
-                response.status(200).json({status: true, payload: 'การแก้ไขรูปภาพโปรไฟล์สำเร็จ'})
+                try{
+                    const token = request.cookies.token
+                    jsonwebtoken.verify(token, SECRET)
+                    const requestEmail = request.body.email
+                    const requestAvatar = request.file.filename
+                    const [results] = await connection.query('SELECT avatar FROM account WHERE email = ?',
+                    [requestEmail])
+                    assert(results.length > 0)
+                    const information = results[0].avatar
+                    fs.unlinkSync(path.join('./public/images/avatar', information))
+                    await connection.query('UPDATE account SET avatar = ?, update_at = ? WHERE email = ?',
+                    [requestAvatar, new Date(), requestEmail])
+                    response.status(200).json({status: true, payload: 'การแก้ไขรูปภาพโปรไฟล์สำเร็จ'})
+                }catch(error){
+                    try{
+                        fs.unlinkSync(path.join('./public/images/avatar', request.file.filename))
+                    }catch(error){}finally{
+                        if(error.code === 'ECONNREFUSED'){
+                            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+                        }else{
+                            response.status(200).json({status: false, payload: 'การแก้ไขรูปภาพโปรไฟล์ล้มเหลว'})
+                        }
+                    }
+                }
             }
         })
     }catch(error){
@@ -276,17 +301,19 @@ module.exports.updateAvatar = async (request, response) => {
                 response.status(200).json({status: false, payload: 'การแก้ไขรูปภาพโปรไฟล์ล้มเหลว'})
             }
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.updateGachaCount = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestEmail = request.params.email
         const requestGachaCount = request.body.gacha_count
         await connection.query('UPDATE account SET gacha_count = ?, update_at = ? WHERE email = ?',
@@ -298,5 +325,7 @@ module.exports.updateGachaCount = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขจำนวนกาชาล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }

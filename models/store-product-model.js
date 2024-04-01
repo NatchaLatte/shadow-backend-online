@@ -3,13 +3,13 @@ const jsonwebtoken = require('jsonwebtoken')
 const SECRET = process.env.SECRET
 
 module.exports.createStoreProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requesUUID = uuid.v4()
         const requesEmail = request.body.email
         const requestGameName = request.body.game_name
@@ -25,17 +25,19 @@ module.exports.createStoreProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การเพิ่มสินค้าล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.readStoreProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const token = request.cookies.token
         const decoded = jsonwebtoken.verify(token, SECRET)
         const requestEmail = decoded.email
@@ -48,17 +50,19 @@ module.exports.readStoreProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.readLastedStoreProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const token = request.cookies.token
         const decoded = jsonwebtoken.verify(token, SECRET)
         const requestEmail = decoded.email
@@ -71,5 +75,7 @@ module.exports.readLastedStoreProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }

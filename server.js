@@ -1,12 +1,13 @@
+const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const path = require('path')
 const dotenv = require('dotenv')
-const bodyParser = require("body-parser")
 const express = require('express')
 const morgan = require('morgan')
+const app = express()
 dotenv.config({ path: path.join(__dirname, 'server.env') })
 const corsOptions = {
-    'origin': '*',
+    'origin': [process.env.CLIENT],
     'credentials': true,
 }
 const accountRoute = require('./routes/account-route')
@@ -24,10 +25,10 @@ const storeProduct = require('./routes/store-product-route')
 const logRedeemCode = require('./routes/log-redeem-code-route')
 const otp = require('./routes/otp-route')
 const validateRedeemCode = require('./routes/validate-redeem-code-route')
-const app = express()
 
+app.use(cookieParser())
+app.use(express.json())
 app.use(cors(corsOptions))
-app.use(bodyParser.json())
 app.use(morgan('dev'))
 app.use('/public/images/avatar', express.static(path.join(__dirname, '/public/images/avatar')))
 app.use('/public/images/banner', express.static(path.join(__dirname, '/public/images/banner')))

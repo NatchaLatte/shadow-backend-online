@@ -1,13 +1,13 @@
 const mysql = require('mysql2/promise')
 
 module.exports.updateAysel = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requesEmail = request.body.email
         const requestAyselAmount = request.body.aysel_amount
         await connection.query('UPDATE finance SET aysel_amount = ?, update_at = ? WHERE email = ?',
@@ -19,5 +19,7 @@ module.exports.updateAysel = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขจำนวนไอเซลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }

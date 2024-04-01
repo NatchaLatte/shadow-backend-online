@@ -32,22 +32,34 @@ const upload = multer({
 })
 
 module.exports.bannerInsert = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         upload.single('file')(request, response, async (error) => {
             if(error){
                 response.status(200).json({status: false, payload: error.message})
             }else{
-                const requestUUID = uuid.v4()
-                const requestInformation = request.file.filename
-                await connection.query('INSERT INTO banner (uuid, information) VALUES (?, ?)',
-                [requestUUID, requestInformation])
-                response.status(200).json({status: true, payload: 'การเพิ่มแถบประกาศสำเร็จ'})
+                try{
+                    const requestUUID = uuid.v4()
+                    const requestInformation = request.file.filename
+                    await connection.query('INSERT INTO banner (uuid, information) VALUES (?, ?)',
+                    [requestUUID, requestInformation])
+                    response.status(200).json({status: true, payload: 'การเพิ่มแถบประกาศสำเร็จ'})
+                }catch(error){
+                    try{
+                        fs.unlinkSync(path.join('./public/images/banner', request.file.filename))
+                    }catch(error){}finally{
+                        if(error.code === 'ECONNREFUSED'){
+                            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+                        }else{
+                            response.status(200).json({status: false, payload: 'การเพิ่มแถบประกาศล้มเหลว'})
+                        }
+                    }
+                }
             }
         })
     }catch(error){
@@ -64,46 +76,60 @@ module.exports.bannerInsert = async (request, response) => {
 }
 
 module.exports.bannerSelect = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT uuid, information, create_at, update_at FROM banner')
         assert(results.length > 0)
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
-            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+            response.status(200).json({status: false, payload: []})
         }else{
-            response.status(200).json({status: false, payload: 'การแสดงแถบประกาศล้มเหลว'})
+            response.status(200).json({status: false, payload: []})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.bannerUpdate = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         upload.single('file')(request, response, async (error) => {
             if(error){
                 response.status(200).json({status: false, payload: error.message})
             }else{
-                const requestUUID = request.body.uuid
-                const requestInformation = request.file.filename
-                const [results] = await connection.query('SELECT information FROM banner WHERE uuid = ?', [requestUUID])
-                assert(results.length > 0)
-                const information = results[0].information
-                fs.unlinkSync(path.join('./public/images/banner', information))
-                await connection.query('UPDATE banner SET information = ?, update_at = ? WHERE uuid = ?',
-                [requestInformation, new Date(), requestUUID])
-                response.status(200).json({status: true, payload: 'การแก้ไขแถบประกาศสำเร็จ'})
+                try{
+                    const requestUUID = request.body.uuid
+                    const requestInformation = request.file.filename
+                    const [results] = await connection.query('SELECT information FROM banner WHERE uuid = ?', [requestUUID])
+                    assert(results.length > 0)
+                    const information = results[0].information
+                    fs.unlinkSync(path.join('./public/images/banner', information))
+                    await connection.query('UPDATE banner SET information = ?, update_at = ? WHERE uuid = ?',
+                    [requestInformation, new Date(), requestUUID])
+                    response.status(200).json({status: true, payload: 'การแก้ไขแถบประกาศสำเร็จ'})
+                }catch(error){
+                    try{
+                        fs.unlinkSync(path.join('./public/images/banner', request.file.filename))
+                    }catch(error){}finally{
+                        if(error.code === 'ECONNREFUSED'){
+                            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+                        }else{
+                            response.status(200).json({status: false, payload: 'การแก้ไขแถบประกาศล้มเหลว'})
+                        }
+                    }
+                }
             }
         })
     }catch(error){
@@ -120,13 +146,13 @@ module.exports.bannerUpdate = async (request, response) => {
 }
 
 module.exports.bannerDelete = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const [results] = await connection.query('SELECT information FROM banner WHERE uuid = ?', [requestUUID])
         assert(results.length > 0)
@@ -140,5 +166,7 @@ module.exports.bannerDelete = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การลบแถบประกาศล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }

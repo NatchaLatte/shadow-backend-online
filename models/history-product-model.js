@@ -4,13 +4,13 @@ const SECRET = process.env.SECRET
 const assert = require('assert')
 
 module.exports.createHistoryProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requesUUID = request.body.uuid
         const requesEmail = request.body.email
         const requestGameName = request.body.game_name
@@ -26,17 +26,19 @@ module.exports.createHistoryProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การสร้างประวัติธุรกรรมล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.readHistoryProduct = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const token = request.cookies.token
         const decoded = jsonwebtoken.verify(token, SECRET)
         const requestEmail = decoded.email
@@ -49,17 +51,19 @@ module.exports.readHistoryProduct = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.readSumAysel = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT SUM(product_price) AS sumAysel FROM history_product')
         assert(results[0].sumAysel !== null)
         response.status(200).json({status: true, payload: results})
@@ -69,17 +73,19 @@ module.exports.readSumAysel = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.readSumBuyItems = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT COUNT(uuid) AS sumBuyItem FROM history_product')
         response.status(200).json({status: true, payload: results})
     }catch(error){
@@ -88,5 +94,7 @@ module.exports.readSumBuyItems = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }

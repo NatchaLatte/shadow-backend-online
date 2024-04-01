@@ -32,13 +32,13 @@ const upload = multer({
 })
 
 module.exports.paymentMethodSelect = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT uuid, method, information, create_at, update_at FROM payment_method')
         response.status(200).json({status: true, payload: results})
     }catch(error){
@@ -47,30 +47,44 @@ module.exports.paymentMethodSelect = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.paymentMethodUpdateImage = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         upload.single('file')(request, response, async (error) => {
             if(error){
                 response.status(200).json({status: false, payload: error.message})
             }else{
-                const requestUUID = request.body.uuid
-                const requestInformation = request.file.filename
-                const [results] = await connection.query('SELECT information FROM payment_method WHERE uuid = ?', [requestUUID])
-                assert(results.length > 0)
-                const information = results[0].information
-                fs.unlinkSync(path.join('./public/images/payment_method', information))
-                await connection.query('UPDATE payment_method SET information = ?, update_at = ? WHERE uuid = ?',
-                [requestInformation, new Date(), requestUUID])
-                response.status(200).json({status: true, payload: 'การแก้ไขรูปภาพสอนการชำระเงินสำเร็จ'})
+                try{
+                    const requestUUID = request.body.uuid
+                    const requestInformation = request.file.filename
+                    const [results] = await connection.query('SELECT information FROM payment_method WHERE uuid = ?', [requestUUID])
+                    assert(results.length > 0)
+                    const information = results[0].information
+                    fs.unlinkSync(path.join('./public/images/payment_method', information))
+                    await connection.query('UPDATE payment_method SET information = ?, update_at = ? WHERE uuid = ?',
+                    [requestInformation, new Date(), requestUUID])
+                    response.status(200).json({status: true, payload: 'การแก้ไขรูปภาพสอนการชำระเงินสำเร็จ'})
+                }catch(error){
+                    try{
+                        fs.unlinkSync(path.join('./public/images/payment_method', request.file.filename))
+                    }catch(error){}finally{
+                        if(error.code === 'ECONNREFUSED'){
+                            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+                        }else{
+                            response.status(200).json({status: false, payload: 'การแก้ไขรูปภาพสอนการชำระเงินล้มเหลว'})
+                        }
+                    }
+                }
             }
         })
     }catch(error){
@@ -83,17 +97,19 @@ module.exports.paymentMethodUpdateImage = async (request, response) => {
                 response.status(200).json({status: false, payload: 'การแก้ไขรูปภาพสอนการชำระเงินล้มเหลว'})
             }
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.paymentMethodUpdateVideo = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.body.uuid
         const requestInformation = request.body.information
         await connection.query('UPDATE payment_method SET information = ?, update_at = ? WHERE uuid = ?',
@@ -105,17 +121,19 @@ module.exports.paymentMethodUpdateVideo = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขวิดีโอสอนการชำระเงินล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.deletePaymentMethodImage = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const [results] = await connection.query('SELECT information FROM payment_method WHERE uuid = ?',
         [requestUUID])
@@ -131,17 +149,19 @@ module.exports.deletePaymentMethodImage = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การลบรูปภาพสอนการชำระเงินล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.deletePaymentMethodVideo = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const requestUUID = request.params.uuid
         const [results] = await connection.query('SELECT information FROM payment_method WHERE uuid = ?',
         [requestUUID])
@@ -155,5 +175,7 @@ module.exports.deletePaymentMethodVideo = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การลบวิดีโอสอนการชำระเงินล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }

@@ -3,13 +3,13 @@ const jsonwebtoken = require('jsonwebtoken')
 const SECRET = process.env.SECRET
 
 module.exports.readHistoryPayment = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const token = request.cookies.token
         const decoded = jsonwebtoken.verify(token, SECRET)
         const requestEmail = decoded.email
@@ -22,17 +22,19 @@ module.exports.readHistoryPayment = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }
 
 module.exports.readSumCash = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME
+    })
     try{
-        const connection = await mysql.createConnection({
-            host        : process.env.DATABASE_HOST,
-            user        : process.env.DATABASE_USER,
-            password    : process.env.DATABASE_PASSWORD,
-            database    : process.env.DATABASE_NAME
-        })
         const [results] = await connection.query('SELECT SUM(cash_amount) AS sumCash FROM history_payment')
         response.status(200).json({status: true, payload: results})
     }catch(error){
@@ -41,5 +43,7 @@ module.exports.readSumCash = async (request, response) => {
         }else{
             response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
         }
+    }finally {
+        await connection.end();
     }
 }

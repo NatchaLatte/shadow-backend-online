@@ -12,6 +12,10 @@ exports.readGeneralProductWithUUID = (request, response) => {
     generalProductModel.readGeneralProductWithUUID(request, response)
 }
 
+exports.readGeneralProductWithName = (request, response) => {
+    generalProductModel.readGeneralProductWithName(request, response)
+}
+
 exports.readGeneralProductOldToNew = (request, response) => {
     generalProductModel.readGeneralProductOldToNew(request, response)
 }
