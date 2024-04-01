@@ -13,9 +13,9 @@ module.exports.readRedeemCode = async (request, response) => {
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
-            response.status(500).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
         }else{
-            response.status(500).json({status: false, payload: 'การดึงข้อมูลล้มเหลว'})
+            response.status(200).json({status: false, payload: 'การดึงข้อมูลล้มเหลว'})
         }
     }
 }
@@ -44,9 +44,9 @@ module.exports.logRedeemCode = async (request, response) => {
         response.status(200).json({status: true, payload: 'การบันทึกข้อมูลของเกมสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
-            response.status(500).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
         }else{
-            response.status(500).json({status: false, payload: 'การบันทึกข้อมูลของเกมล้มเหลว'})
+            response.status(200).json({status: false, payload: 'การบันทึกข้อมูลของเกมล้มเหลว'})
         }
     }
 }
