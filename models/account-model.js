@@ -274,11 +274,15 @@ module.exports.updateAvatar = async (request, response) => {
                     [requestEmail])
                     assert(results.length > 0)
                     const information = results[0].avatar
-                    fs.unlinkSync(path.join('./public/images/avatar', information))
+                    const avatarName = ['a.png', 'b.png', 'c.png', 'd.png', 'default.png', 'e.png', 'f.png', 'g.png', 'h.png', 'i.png', 'j.png', 'k.png', 'l.png', 'm.png', 'n.png', 'o.png', 'p.png', 'q.png', 'r.png', 's.png', 't.png', 'u.png', 'v.png', 'w.png', 'x.png', 'y.png', 'z.png'];
+                    if(!avatarName.includes(information)){
+                        fs.unlinkSync(path.join('./public/images/avatar', information))
+                    }
                     await connection.query('UPDATE account SET avatar = ?, update_at = ? WHERE email = ?',
                     [requestAvatar, new Date(), requestEmail])
                     response.status(200).json({status: true, payload: 'การแก้ไขรูปภาพโปรไฟล์สำเร็จ'})
                 }catch(error){
+                    console.log(error)
                     try{
                         fs.unlinkSync(path.join('./public/images/avatar', request.file.filename))
                     }catch(error){}
