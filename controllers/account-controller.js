@@ -24,6 +24,10 @@ exports.selectAccount = (request, response) => {
     accountModel.selectAccount(request, response)
 }
 
+exports.readUsernameByEmail = (request, response) => {
+    accountModel.readUsernameByEmail(request, response)
+}
+
 exports.updateStatusAccount = (request, response) => {
     accountModel.updateStatusAccount(request, response)
 }
