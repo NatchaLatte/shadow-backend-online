@@ -69,7 +69,7 @@ module.exports.createGeneralProduct = async (request, response) => {
                         if(error.code === 'ECONNREFUSED'){
                             response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
                         }else{
-                            response.status(200).json({status: false, payload: 'การเพิ่มสินค้าล้มเหลว'})
+                            response.status(200).json({status: false, payload: 'กรุณาเลือกรูปภาพ'})
                         }
                     }
                 }
