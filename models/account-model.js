@@ -77,13 +77,13 @@ module.exports.signUpAccount = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestEmail = request.body.email
@@ -93,6 +93,7 @@ module.exports.signUpAccount = async (request, response) => {
         [requestEmail, requestUsername, requestAvatar])
         await connection.query('INSERT INTO finance (email) VALUES (?)',
         [requestEmail])
+        connection.end()
         response.status(200).json({status: true, payload: 'การสร้างบัญชีสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -109,18 +110,19 @@ module.exports.signInAccount = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestEmail = request.body.email
         const [results] = await connection.query('SELECT email, suspended_status, role FROM account WHERE email = ?',
         [requestEmail])
+        connection.end()
         assert(results.length !== 0, 'ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง')
         assert(results.length === 1, 'การเข้าสู่ระบบล้มเหลว')
         assert(results[0].suspended_status === 0, 'บัญชีนี้ถูกระงับ')
@@ -150,13 +152,13 @@ module.exports.authenticationAccount = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const token = request.cookies.token
@@ -167,6 +169,7 @@ module.exports.authenticationAccount = async (request, response) => {
         assert(resultsAccount.length === 1)
         const [resultsFinance] = await connection.query('SELECT aysel_amount FROM finance WHERE email = ?',
         [requestEmail])
+        connection.end()
         assert(resultsFinance.length === 1)
         resultsAccount[0].aysel_amount = resultsFinance[0].aysel_amount
         response.status(200).json({status: true, payload: resultsAccount[0]})
@@ -197,16 +200,17 @@ module.exports.selectAccount = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT email, username, suspended_status, role FROM account')
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -223,13 +227,13 @@ module.exports.updateStatusAccount = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestEmail = request.params.email
@@ -237,10 +241,12 @@ module.exports.updateStatusAccount = async (request, response) => {
         if(requestStatus === 0){
             await connection.query('UPDATE account SET suspended_status = 1, update_at = ? WHERE email = ? LIMIT 1',
             [new Date(), requestEmail])
+            connection.end()
             response.status(200).json({status: true, payload: 'ระงับผู้ใช้สำเร็จ'})
         }else if(requestStatus === 1){
             await connection.query('UPDATE account SET suspended_status = 0, update_at = ? WHERE email = ? LIMIT 1',
             [new Date(), requestEmail])
+            connection.end()
             response.status(200).json({status: true, payload: 'ปลดระงับผู้ใช้สำเร็จ'})
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขสถานะล้มเหลว'})
@@ -260,19 +266,20 @@ module.exports.updateUsername = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestEmail = request.params.email
         const requestUsername = request.body.username
         await connection.query('UPDATE account SET username = ?, update_at = ? WHERE email = ?',
         [requestUsername, new Date(), requestEmail])
+        connection.end()
         response.status(200).json({status: true, payload: 'การแก้ไขชื่อสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -289,17 +296,18 @@ module.exports.readUsernameByEmail = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestEmail = request.params.email 
         const [results] = await connection.query('SELECT username FROM account WHERE email = ?' ,[requestEmail])
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -316,13 +324,13 @@ module.exports.updateAvatar = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         upload.single('file')(request, response, async (error) => {
@@ -344,6 +352,7 @@ module.exports.updateAvatar = async (request, response) => {
                     }
                     await connection.query('UPDATE account SET avatar = ?, update_at = ? WHERE email = ?',
                     [requestAvatar, new Date(), requestEmail])
+                    connection.end()
                     response.status(200).json({status: true, payload: 'การแก้ไขรูปภาพโปรไฟล์สำเร็จ'})
                 }catch(error){
                     console.log(error)
@@ -379,19 +388,20 @@ module.exports.updateGachaCount = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestEmail = request.params.email
         const requestGachaCount = request.body.gacha_count
         await connection.query('UPDATE account SET gacha_count = ?, update_at = ? WHERE email = ?',
         [requestGachaCount, new Date(), requestEmail])
+        connection.end()
         response.status(200).json({status: true, payload: 'การแก้ไขจำนวนกาชาสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){

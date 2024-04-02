@@ -37,13 +37,13 @@ module.exports.bannerInsert = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         upload.single('file')(request, response, async (error) => {
@@ -55,6 +55,7 @@ module.exports.bannerInsert = async (request, response) => {
                     const requestInformation = request.file.filename
                     await connection.query('INSERT INTO banner (uuid, information) VALUES (?, ?)',
                     [requestUUID, requestInformation])
+                    connection.end()
                     response.status(200).json({status: true, payload: 'การเพิ่มแถบประกาศสำเร็จ'})
                 }catch(error){
                     try{
@@ -88,17 +89,18 @@ module.exports.bannerSelect = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT uuid, information, create_at, update_at FROM banner')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -115,13 +117,13 @@ module.exports.bannerUpdate = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         upload.single('file')(request, response, async (error) => {
@@ -137,6 +139,7 @@ module.exports.bannerUpdate = async (request, response) => {
                     fs.unlinkSync(path.join('./public/images/banner', information))
                     await connection.query('UPDATE banner SET information = ?, update_at = ? WHERE uuid = ?',
                     [requestInformation, new Date(), requestUUID])
+                    connection.end()
                     response.status(200).json({status: true, payload: 'การแก้ไขแถบประกาศสำเร็จ'})
                 }catch(error){
                     try{
@@ -170,13 +173,13 @@ module.exports.bannerDelete = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -184,6 +187,7 @@ module.exports.bannerDelete = async (request, response) => {
         assert(results.length > 0)
         const information = results[0].information
         await connection.query('DELETE FROM banner WHERE uuid = ?', [requestUUID])
+        connection.end()
         fs.unlinkSync(path.join('./public/images/banner', information))
         response.status(200).json({status: true, payload: 'การลบแถบประกาศสำเร็จ'})
     }catch(error){

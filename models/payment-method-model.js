@@ -37,16 +37,17 @@ module.exports.paymentMethodSelect = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT uuid, method, information, create_at, update_at FROM payment_method')
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -63,13 +64,13 @@ module.exports.paymentMethodUpdateImage = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         upload.single('file')(request, response, async (error) => {
@@ -87,6 +88,7 @@ module.exports.paymentMethodUpdateImage = async (request, response) => {
                     }
                     await connection.query('UPDATE payment_method SET information = ?, update_at = ? WHERE uuid = ?',
                     [requestInformation, new Date(), requestUUID])
+                    connection.end()
                     response.status(200).json({status: true, payload: 'การแก้ไขรูปภาพสอนการชำระเงินสำเร็จ'})
                 }catch(error){
                     try{
@@ -122,19 +124,20 @@ module.exports.paymentMethodUpdateVideo = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.body.uuid
         const requestInformation = request.body.information
         await connection.query('UPDATE payment_method SET information = ?, update_at = ? WHERE uuid = ?',
         [requestInformation, new Date(), requestUUID])
+        connection.end()
         response.status(200).json({status: true, payload: 'การแก้ไขวิดีโอสอนการชำระเงินสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -151,13 +154,13 @@ module.exports.deletePaymentMethodImage = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -167,6 +170,7 @@ module.exports.deletePaymentMethodImage = async (request, response) => {
         const information = results[0].information
         await connection.query("UPDATE payment_method SET information = '' WHERE uuid = ?",
         [requestUUID])
+        connection.end()
         fs.unlinkSync(path.join('./public/images/payment-method', information))
         response.status(200).json({status: true, payload: 'การลบรูปภาพสอนการชำระเงินสำเร็จ'})
     }catch(error){
@@ -184,13 +188,13 @@ module.exports.deletePaymentMethodVideo = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -199,6 +203,7 @@ module.exports.deletePaymentMethodVideo = async (request, response) => {
         assert(results.length > 0)
         await connection.query("UPDATE payment_method SET information = '' WHERE uuid = ?",
         [requestUUID])
+        connection.end()
         response.status(200).json({status: true, payload: 'การลบวิดีโอสอนการชำระเงินสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){

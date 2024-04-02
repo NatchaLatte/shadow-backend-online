@@ -37,13 +37,13 @@ module.exports.createGeneralProduct = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         upload.single('file')(request, response, async (error) => {
@@ -61,6 +61,7 @@ module.exports.createGeneralProduct = async (request, response) => {
                     const requestDescription = request.body.description
                     await connection.query('INSERT INTO general_product (uuid, product_id, game_name, name, normal_price, special_price, special_price_status, information, description, create_at, update_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                     [requestUUID, requestProductId, requestGameName, requestName, requestNormalPrice, requestSpecialPrice, false, requestInformation, requestDescription, new Date(), new Date()])
+                    connection.end()
                     response.status(200).json({status: true, payload: 'การเพิ่มสินค้าสำเร็จ'})
                 }catch(error){
                     try{
@@ -100,17 +101,18 @@ module.exports.readGeneralProduct = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -127,19 +129,20 @@ module.exports.readGeneralProductWithUUID = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid 
         const [results] = await connection.query('SELECT * FROM general_product WHERE uuid = ?',
         [requestUUID])
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -156,17 +159,18 @@ module.exports.readGeneralProductOldToNew = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY update_at')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -183,17 +187,18 @@ module.exports.readGeneralProductNewToOld = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY update_at DESC')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -210,17 +215,18 @@ module.exports.readGeneralProductCheapToExpensive = async (request, response) =>
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY normal_price')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -237,17 +243,18 @@ module.exports.readGeneralProductExpensiveToCheap = async (request, response) =>
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product ORDER BY normal_price DESC')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -264,17 +271,18 @@ module.exports.readGeneral3Product = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product LIMIT 3')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -291,13 +299,13 @@ module.exports.updateGeneralProduct = async (request, response) => { // แก�
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -310,6 +318,7 @@ module.exports.updateGeneralProduct = async (request, response) => { // แก�
         // แก้ไขรูปภาพไม่ได้ (information)
         await connection.query('UPDATE general_product SET name = ? , game_name = ? , normal_price = ? , special_price = ? , information = ? , description = ? , update_at = ? WHERE uuid = ? LIMIT 1',
         [requestName, requestGameName, requestNormalPrice, requestSpecialPrice, requestInformation, requestDescription, new Date(), requestUUID])
+        connection.end()
         response.status(200).json({status: true, payload: 'การแก้ไขสินค้าสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -326,13 +335,13 @@ module.exports.updateStatusPrice = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -340,10 +349,12 @@ module.exports.updateStatusPrice = async (request, response) => {
         if(requestStatus === 0){
             await connection.query('UPDATE general_product SET special_price_status = 1, update_at = ? WHERE uuid = ? LIMIT 1',
             [new Date(), requestUUID])
+            connection.end()
             response.status(200).json({status: true, payload: 'เปิดสถานะการลดราคาสำเร็จ'})
         }else if(requestStatus === 1){
             await connection.query('UPDATE general_product SET special_price_status = 0, update_at = ? WHERE uuid = ? LIMIT 1',
             [new Date(), requestUUID])
+            connection.end()
             response.status(200).json({status: true, payload: 'ปิดสถานะการลดราคาสำเร็จ'})
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขสถานะล้มเหลว'})
@@ -363,13 +374,13 @@ module.exports.deleteGeneralProduct = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid
@@ -377,6 +388,7 @@ module.exports.deleteGeneralProduct = async (request, response) => {
         assert(results.length > 0)
         const information = results[0].information
         await connection.query('DELETE FROM general_product WHERE uuid = ?', [requestUUID])
+        connection.end()
         fs.unlinkSync(path.join('./public/images/general-product', information))
         response.status(200).json({status: true, payload: 'การลบสินค้าสำเร็จ'})
     }catch(error){
@@ -394,17 +406,18 @@ module.exports.readPromotionProduct = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -421,19 +434,20 @@ module.exports.readPromotionProductWithUUID = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestUUID = request.params.uuid 
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 and uuid = ?',
         [requestUUID])
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -450,18 +464,19 @@ module.exports.readGeneralProductWithName = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const requestName = request.params.name
         const [results] = await connection.query('SELECT * FROM general_product WHERE name = ?', [requestName])
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -478,17 +493,18 @@ module.exports.readPromotionProductOldToNew = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY update_at')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -505,17 +521,18 @@ module.exports.readPromotionProductNewToOld = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY update_at DESC')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -532,17 +549,18 @@ module.exports.readPromotionProductCheapToExpensive = async (request, response) 
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY normal_price')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -559,17 +577,18 @@ module.exports.readPromotionProductExpensiveToCheap = async (request, response) 
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 ORDER BY normal_price DESC')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -586,17 +605,18 @@ module.exports.readPromotion3Product = async (request, response) => {
         user        : process.env.DATABASE_USER,
         password    : process.env.DATABASE_PASSWORD,
         database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
     })
     try{
         const [results] = await connection.query('SELECT * FROM general_product WHERE special_price_status = 1 LIMIT 3')
         assert(results.length > 0)
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){

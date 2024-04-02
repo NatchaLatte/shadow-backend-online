@@ -37,6 +37,7 @@ module.exports.validateRedeemCode = async (request, response) => {
         }
         await connection.query('UPDATE `store_product` SET used_status = ?, update_at = ? WHERE uuid = ?',
         [true, new Date(), uuid])
+        connection.end()
         response.status(200).json({status: true, payload: product_id})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){

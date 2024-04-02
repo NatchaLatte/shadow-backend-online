@@ -27,6 +27,7 @@ module.exports.topUp = async (request, response) => {
         [baht, (process.env.AYSEL_CURRENCY/process.env.BAHT_CURRENCY)*baht, new Date(), requestEmail])
         await connection.query('INSERT INTO history_payment (uuid, email, aysel_amount, cash_amount, payment_status, create_at, update_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [uuid.v4(), requestEmail, (process.env.AYSEL_CURRENCY/process.env.BAHT_CURRENCY)*baht, baht, true, new Date(), new Date()])
+        connection.end()
         response.status(200).json({status: true, payload: 'การเติมไอเซลสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){

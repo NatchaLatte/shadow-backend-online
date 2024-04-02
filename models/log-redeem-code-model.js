@@ -8,15 +8,16 @@ module.exports.readRedeemCode = async (request, response) => {
             user        : process.env.DATABASE_USER,
             password    : process.env.DATABASE_PASSWORD,
             database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+            waitForConnections: true,
+            connectionLimit: 10,
+            maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+            idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+            queueLimit: 0,
+            enableKeepAlive: true,
+            keepAliveInitialDelay: 0,
         })
         const [results] = await connection.query('SELECT * FROM game_product')
+        connection.end()
         response.status(200).json({status: true, payload: results})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
@@ -34,13 +35,13 @@ module.exports.logRedeemCode = async (request, response) => {
             user        : process.env.DATABASE_USER,
             password    : process.env.DATABASE_PASSWORD,
             database    : process.env.DATABASE_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+            waitForConnections: true,
+            connectionLimit: 10,
+            maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+            idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+            queueLimit: 0,
+            enableKeepAlive: true,
+            keepAliveInitialDelay: 0,
         })
         const requestUUID = uuid.v4()
         const requestGameName = Object.keys(request.body)[0]
@@ -55,6 +56,7 @@ module.exports.logRedeemCode = async (request, response) => {
                 [uuid.v4(), requestGameProduct.product_id, requestGameName, requestGameProduct.name, requestGameProduct.description])
             }
         }
+        connection.end()
         response.status(200).json({status: true, payload: 'การบันทึกข้อมูลของเกมสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){

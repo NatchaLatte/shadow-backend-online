@@ -19,6 +19,7 @@ module.exports.updateAysel = async (request, response) => {
         const requestAyselAmount = request.body.aysel_amount
         await connection.query('UPDATE finance SET aysel_amount = ?, update_at = ? WHERE email = ?',
         [requestAyselAmount, new Date(), requesEmail])
+        connection.end()
         response.status(200).json({status: true, payload: 'การแก้ไขจำนวนไอเอซสำเร็จ'})
     }catch(error){
         if(error.code === 'ECONNREFUSED'){
