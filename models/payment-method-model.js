@@ -81,8 +81,10 @@ module.exports.paymentMethodUpdateImage = async (request, response) => {
                     const requestInformation = request.file.filename
                     const [results] = await connection.query('SELECT information FROM payment_method WHERE uuid = ?', [requestUUID])
                     assert(results.length > 0)
-                    const information = results[0].information
-                    fs.unlinkSync(path.join('./public/images/payment-method', information))
+                    let information = results[0].information
+                    if(information.length !== 0){
+                        fs.unlinkSync(path.join('./public/images/payment-method', information))
+                    }
                     await connection.query('UPDATE payment_method SET information = ?, update_at = ? WHERE uuid = ?',
                     [requestInformation, new Date(), requestUUID])
                     response.status(200).json({status: true, payload: 'การแก้ไขรูปภาพสอนการชำระเงินสำเร็จ'})
@@ -107,6 +109,7 @@ module.exports.paymentMethodUpdateImage = async (request, response) => {
             if(error.code === 'ECONNREFUSED'){
                 response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
             }else{
+                console.log(error.code)
                 response.status(200).json({status: false, payload: 'การแก้ไขรูปภาพสอนการชำระเงินล้มเหลว'})
             }
         }

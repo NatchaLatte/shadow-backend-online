@@ -118,3 +118,29 @@ module.exports.readSumBuyItems = async (request, response) => {
         }
     }
 }
+
+module.exports.readTop10 = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+  idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+    })
+    try{
+        const [results] = await connection.query('SELECT game_name, product_name, COUNT(*) AS count FROM history_product WHERE buy_method != "สินค้ากาชา" and buy_method != "สินค้าประมูล" GROUP BY product_name ORDER BY count DESC LIMIT 10')
+        response.status(200).json({status: true, payload: results})
+    }catch(error){
+        if(error.code === 'ECONNREFUSED'){
+            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+        }else{
+            response.status(200).json({status: false, payload: 'การแสดงข้อมูลล้มเหลว'})
+        }
+    }
+}

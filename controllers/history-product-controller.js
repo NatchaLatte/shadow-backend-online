@@ -15,3 +15,7 @@ exports.readSumAysel = (request, response) => {
 exports.readSumBuyItems = (request, response) => {
     historyProductModel.readSumBuyItems(request, response)
 }
+
+exports.readTop10 = (request, response) => {
+    historyProductModel.readTop10(request, response)
+}
