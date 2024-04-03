@@ -56,7 +56,7 @@ app.use('/api', validateRedeemCode)
 const port = process.env.PORT || 3001
 const server = app.listen(port, () => {
     console.log(`เปิดเซิร์ฟเวอร์ด้วยพอร์ต ${port} สำเร็จ`)
-    console.log(`ที่อยู่เซิร์ฟเวอร์ http://shadow.serveminecraft.net:${port}/`)
+    console.log(`ที่อยู่เซิร์ฟเวอร์ http://localhost:${port}/`)
 })
 server.on('error', (error) => {
     console.error(`เปิดเซิร์ฟเวอร์ด้วยพอร์ต ${error.address} ล้มเหลว`)

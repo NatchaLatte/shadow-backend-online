@@ -36,6 +36,10 @@ exports.readGeneral3Product = (request, response) => {
     generalProductModel.readGeneral3Product(request, response)
 }
 
+exports.updateGeneralProductImage = (request, response) => {
+    generalProductModel.updateGeneralProductImage(request, response)
+}
+
 exports.updateGeneralProduct = (request, response) => {
     generalProductModel.updateGeneralProduct(request, response)
 }

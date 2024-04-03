@@ -36,6 +36,10 @@ exports.readAuction3Product = (request, response) => {
     auctionProductModel.readAuction3Product(request, response)
 }
 
+exports.updateAuctionProductImage = (request, response) => {
+    auctionProductModel.updateAuctionProductImage(request, response)
+}
+
 exports.updateAuctionProduct = (request, response) => {
     auctionProductModel.updateAuctionProduct(request, response)
 }

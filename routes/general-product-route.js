@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { createGeneralProduct, readGeneralProduct,readGeneralProductWithUUID,readGeneralProductWithName, readGeneralProductOldToNew, readGeneralProductNewToOld,
-        readGeneralProductCheapToExpensive, readGeneralProductExpensiveToCheap, readGeneral3Product, updateGeneralProduct, updateStatusPrice, deleteGeneralProduct,
+        readGeneralProductCheapToExpensive, readGeneralProductExpensiveToCheap, readGeneral3Product, updateGeneralProduct, updateGeneralProductImage, updateStatusPrice, deleteGeneralProduct,
         readPromotionProduct, readPromotionProductWithUUID, readPromotionProductOldToNew, readPromotionProductNewToOld, readPromotionProductCheapToExpensive,
         readPromotionProductExpensiveToCheap, readPromotion3Product } = require('../controllers/general-product-controller')
 
@@ -14,6 +14,7 @@ router.get('/read-general-product-new-to-old', readGeneralProductNewToOld)
 router.get('/read-general-product-cheap-to-expensive', readGeneralProductCheapToExpensive)
 router.get('/read-general-product-expensive-to-cheap', readGeneralProductExpensiveToCheap)
 router.get('/read-general-3-product', readGeneral3Product)
+router.patch('/update-general-product-image/:uuid', updateGeneralProductImage)
 router.patch('/update-general-product/:uuid', updateGeneralProduct)
 router.patch('/update-status-price/:uuid', updateStatusPrice)
 router.delete('/delete-general-product/:uuid', deleteGeneralProduct)

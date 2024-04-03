@@ -1,3 +1,4 @@
+const assert = require('assert')
 const mysql = require('mysql2/promise')
 
 module.exports.updateAysel = async (request, response) => {
@@ -26,6 +27,38 @@ module.exports.updateAysel = async (request, response) => {
             response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
         }else{
             response.status(200).json({status: false, payload: 'การแก้ไขจำนวนไอเซลล้มเหลว'})
+        }
+    }
+}
+
+module.exports.getAysel = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
+    })
+    try{
+        const requesEmail = request.body.email
+        const requestAyselAmount = request.body.aysel_amount
+        const [results] = await connection.query('SELECT aysel_amount FROM finance WHERE email = ?',
+        [requesEmail])
+        assert(results.length > 0)
+        assert(results[0].aysel_amount >= requestAyselAmount)
+        connection.end()
+        response.status(200).json({status: true, payload: []})
+    }catch(error){
+        if(error.code === 'ECONNREFUSED'){
+            response.status(200).json({status: false, payload: []})
+        }else{
+            response.status(200).json({status: false, payload: []})
         }
     }
 }

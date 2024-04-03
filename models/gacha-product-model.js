@@ -70,7 +70,7 @@ module.exports.createGachaProduct = async (request, response) => {
                         if(error.code === 'ECONNREFUSED'){
                             response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
                         }else{
-                            response.status(200).json({status: false, payload: 'การเพิ่มสินค้ากาชาล้มเหลว'})
+                            response.status(200).json({status: false, payload: 'กรุณาเลือกรูปภาพ'})
                         }
                     }
                 }
@@ -84,6 +84,67 @@ module.exports.createGachaProduct = async (request, response) => {
                 response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
             }else{
                 response.status(200).json({status: false, payload: 'การเพิ่มสินค้ากาชาล้มเหลว'})
+            }
+        }
+    }
+}
+
+module.exports.updateGachaProductImage = async (request, response) => {
+    const connection = await mysql.createConnection({
+        host        : process.env.DATABASE_HOST,
+        user        : process.env.DATABASE_USER,
+        password    : process.env.DATABASE_PASSWORD,
+        database    : process.env.DATABASE_NAME,
+        waitForConnections: true,
+        connectionLimit: 10,
+        maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+        idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0,
+    })
+    try{
+        upload.single('file')(request, response, async (error) => {
+            if(error){
+                response.status(200).json({status: false, payload: error.message})
+            }else{
+                try{
+                    const requestUUID = request.params.uuid
+                    const requestName = request.body.name
+                    const requestGameName = request.body.game_name
+                    const requestChance = request.body.chance
+                    const requestGuarantee = request.body.guarantee_status
+                    const requestInformation = request.file.filename
+                    const requestDescription = request.body.description
+                    const [results] = await connection.query('SELECT information FROM gacha_product WHERE uuid = ?', [requestUUID])
+                    assert(results.length > 0)
+                    const information = results[0].information
+                    fs.unlinkSync(path.join('./public/images/gacha-product', information))
+                    await connection.query('UPDATE gacha_product SET name = ?, game_name = ?, chance = ?, guarantee_status = ?, information = ?, description = ?, update_at = ? WHERE uuid = ? LIMIT 1',
+                    [requestName, requestGameName, requestChance, requestGuarantee, requestInformation, requestDescription, new Date(), requestUUID])
+                    connection.end()
+                    response.status(200).json({status: true, payload: 'การแก้ไขสินค้ากาชาสำเร็จ'})
+                }catch(error){
+                    try{
+                        fs.unlinkSync(path.join('./public/images/gacha-product', request.file.filename))
+                    }catch(error){}finally{
+                        if(error.code === 'ECONNREFUSED'){
+                            response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+                        }else{
+                            response.status(200).json({status: false, payload: 'การแก้ไขสินค้ากาชาล้มเหลว'})
+                        }
+                    }
+                }
+            }
+        })
+    }catch(error){
+        try{
+            fs.unlinkSync(path.join('./public/images/gacha-product', request.file.filename))
+        }catch(error){}finally{
+            if(error.code === 'ECONNREFUSED'){
+                response.status(200).json({status: false, payload: 'เกิดข้อผิดพลาดขึ้นในการเชื่อมต่อกับฐานข้อมูล'})
+            }else{
+                response.status(200).json({status: false, payload: 'การแก้ไขสินค้าล้มเหลว'})
             }
         }
     }

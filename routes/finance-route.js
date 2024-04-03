@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const { updateAysel } = require('../controllers/finance-controller')
+const { updateAysel, getAysel } = require('../controllers/finance-controller')
 
 router.patch('/update-aysel', updateAysel)
+router.post('/get-aysel', getAysel)
 
 module.exports = router
